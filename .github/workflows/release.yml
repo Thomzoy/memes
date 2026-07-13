@@ -20,4 +20,5 @@ jobs:
         with:
           files: data/*.mp3
           fail_on_unmatched_files: true
+          make_latest: true
 
