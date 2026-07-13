@@ -15,17 +15,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create versioned release with each mp3 as an asset
+      - name: Create release with each mp3 as an asset
         uses: softprops/action-gh-release@v2
         with:
           files: data/*.mp3
           fail_on_unmatched_files: true
 
-      - name: Refresh the "latest" release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release delete latest --cleanup-tag --yes || true
-          gh release create latest data/*.mp3 \
-            --title "latest" \
-            --notes "Rolling release tracking ${{ github.ref_name }}. Stable download links, e.g. https://github.com/${{ github.repository }}/releases/download/latest/0001.mp3"
