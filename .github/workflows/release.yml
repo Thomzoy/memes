@@ -18,7 +18,9 @@ jobs:
       - name: Create release with each mp3 as an asset
         uses: softprops/action-gh-release@v2
         with:
-          files: data/*.mp3
+          files: |
+            data/*.mp3
+            number.txt
           fail_on_unmatched_files: true
           make_latest: true
 
