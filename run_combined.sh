@@ -15,6 +15,7 @@ uv run python -m yt_dlp --js-runtimes node \
   --extract-audio \
   --audio-format mp3 \
   --audio-quality 0 \
+  --postprocessor-args "ExtractAudio:-af loudnorm=I=-16:TP=-1.5:LRA=11 -ar 44100" \
   --embed-metadata \
   -o "data/%(autonumber)04d.%(ext)s"
 
