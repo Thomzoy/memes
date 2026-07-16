@@ -15,12 +15,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Run run_combined.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          USE_BROWSER_COOKIES: "0"
+        run: bash run_combined.sh
+
       - name: Create release with each mp3 as an asset
         uses: softprops/action-gh-release@v2
         with:
           files: |
             data/*.mp3
             number.txt
+            downloaded.txt
           fail_on_unmatched_files: true
           make_latest: true
 

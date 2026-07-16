@@ -1,23 +1,11 @@
-uv run python -m yt_dlp --js-runtimes node \
-  --verbose \
-  --cookies-from-browser chrome \
-  --download-archive downloaded.txt \
-  --ignore-errors \
-  --extract-audio \
-  --audio-format mp3 \
-  --audio-quality 0 \
-  --embed-metadata \
-  -o "data/%(playlist_index)04d.%(ext)s" \
-  "http://www.youtube.com/playlist?list=PLum-UT-EsfCWXirYrz4y-RI972xf8i-Eu"
+#!/usr/bin/env bash
+set -euo pipefail
 
-uv run python -m yt_dlp \
-  --js-runtimes node \
-  --verbose \
-  --batch-file instagram_saved.txt \
-  --download-archive downloaded.txt \
-  --ignore-errors \
-  --extract-audio \
-  --audio-format mp3 \
-  --audio-quality 0 \
-  --embed-metadata \
-  -o "data_insta/%(autonumber)04d.%(ext)s"
+GIST_ID="25c4117e75a9777e8464f5136f6a7a42"
+OUTPUT="instagram_saved.txt"
+
+curl -s "https://api.github.com/gists/${GIST_ID}" \
+  | jq -r '.files["instagram_saved.txt"].content' \
+  > "$OUTPUT"
+
+echo "Saved $OUTPUT"
