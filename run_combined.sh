@@ -7,11 +7,14 @@ set -euo pipefail
 GIST_ID="25c4117e75a9777e8464f5136f6a7a42"
 OUTPUT="instagram_saved.txt"
 
-curl -s "https://api.github.com/gists/${GIST_ID}" \
-  | jq -r '.files["instagram_saved.txt"].content' \
+gh api "gists/${GIST_ID}" \
+  --jq '.files["instagram_saved.txt"].content' \
   > "$OUTPUT"
 
 echo "Saved $OUTPUT"
+
+# Install dependencies
+uv sync
 
 # Get the youtube playlist
 uv run python -m yt_dlp \
@@ -45,3 +48,6 @@ uv run python -m yt_dlp --js-runtimes node \
 
 # Count the number of videos downloaded
 ls -1 data/*.mp3 2>/dev/null | wc -l | tr -d ' ' > number.txt
+
+
+https://api.github.com/gists/25c4117e75a9777e8464f5136f6a7a42
