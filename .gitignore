@@ -219,3 +219,5 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+instagram_saved.txt
+sources.txt
