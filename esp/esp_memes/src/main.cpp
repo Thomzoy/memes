@@ -294,7 +294,7 @@ void loop() {
       sum += analogRead(POT_PIN);
     }
     const int raw = sum / 4;
-    int mapped_value = map(raw, 0, 4094, 20, 0);
+    int mapped_value = map(raw, 0, 4094, 10, 0);
     float float_value = static_cast<float>(mapped_value) / 10.0f;
 
     if (mapped_value != lastMappedValue) {

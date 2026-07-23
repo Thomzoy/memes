@@ -1,9 +1,12 @@
-# Ensure the data directory exists
+# remove data directory if it exists
+rm -rf data
 mkdir -p data
 
 # Get existing videos from the release
 echo "Getting existing videos from the release"
 gh release download --pattern "*.mp3" --dir data_old --repo https://github.com/Thomzoy/memes
+gh release download --pattern "downloaded.txt" --dir . --repo https://github.com/Thomzoy/memes
+
 
 # Get the instagram saved videos
 # Note: no `set -e` here on purpose — the script should keep going even if a step fails
