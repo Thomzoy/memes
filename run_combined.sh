@@ -3,7 +3,7 @@ mkdir -p data
 
 # Get existing videos from the release
 echo "Getting existing videos from the release"
-#gh release download --pattern "*.mp3" --dir data_old --repo https://github.com/Thomzoy/memes
+gh release download --pattern "*.mp3" --dir data_old --repo https://github.com/Thomzoy/memes
 
 # Get the instagram saved videos
 # Note: no `set -e` here on purpose — the script should keep going even if a step fails
@@ -72,8 +72,8 @@ done
 
 # Move all previously released files from data_old into data.
 if [ -d data_old ]; then
-  cp data_old/*.mp3 data/ 2>/dev/null || true
-  # rmdir data_old 2>/dev/null || true
+  mv data_old/*.mp3 data/ 2>/dev/null || true
+  rmdir data_old 2>/dev/null || true
 fi
 
 echo "Counting videos"

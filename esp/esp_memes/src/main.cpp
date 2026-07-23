@@ -16,6 +16,8 @@ constexpr size_t LOW_WATERMARK = 1024;
 constexpr int BUTTON_PIN = 32;
 constexpr int POT_PIN = 34;
 constexpr uint32_t POT_PRINT_INTERVAL_MS = 200;
+constexpr int LED_PIN = 23;
+constexpr uint32_t LED_BLINK_INTERVAL_MS = 200;
 
 // MAX98357 I2S wiring 
 constexpr int I2S_BCLK_PIN = 27;
@@ -41,6 +43,7 @@ uint32_t nextReconnectMs = 0;
 bool playbackFinished = false;
 bool streamExhausted = false;
 bool startPlaybackRequested = false;
+bool doBlinkButton = true;
 int32_t streamContentLength = -1;
 size_t streamBytesRead = 0;
 OneButton button(BUTTON_PIN, true, true);
@@ -155,6 +158,8 @@ void setup() {
   Serial.begin(115200);
   button.attachClick(onButtonClick);
   pinMode(POT_PIN, INPUT);
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, LOW);
   analogReadResolution(12);
   connectToWifi();
 
@@ -274,6 +279,8 @@ void pumpHttpToMp3() {
 void loop() {
   static uint32_t lastStatsMs = 0;
   static uint32_t lastPotPrintMs = 0;
+  static uint32_t lastLedBlinkMs = 0;
+  static bool ledState = false;
   static int lastMappedValue = -1;
   static bool wasPaused = false;
 
@@ -281,21 +288,30 @@ void loop() {
 
   if (millis() - lastPotPrintMs >= POT_PRINT_INTERVAL_MS) {
     lastPotPrintMs = millis();
-    int value = analogRead(POT_PIN);
     // Map raw ADC value to 0..20, then to gain 0.0..2.0.
-    int mapped_value = map(value, 0, 4094, 20, 0);
+    int sum = 0;
+    for (int i = 0; i < 4; ++i) {
+      sum += analogRead(POT_PIN);
+    }
+    const int raw = sum / 4;
+    int mapped_value = map(raw, 0, 4094, 20, 0);
     float float_value = static_cast<float>(mapped_value) / 10.0f;
 
     if (mapped_value != lastMappedValue) {
       lastMappedValue = mapped_value;
       mp3.setGain(float_value);
-      Serial.printf("pot34_raw=%d mapped=%d gain=%.1f\n", value, mapped_value, float_value);
+      Serial.printf("pot34_raw=%d mapped=%d gain=%.1f\n", raw, mapped_value, float_value);
           Serial.printf("buffer=%d frames=%lu underflows=%lu errors=%lu dumps=%lu\n",
                   mp3.available(), mp3.frames(), mp3.underflows(), mp3.errors(), mp3.dumps());
     }
   }
 
   if (!startPlaybackRequested) {
+    if (millis() - lastLedBlinkMs >= LED_BLINK_INTERVAL_MS) {
+      lastLedBlinkMs = millis();
+      ledState = !ledState;
+      digitalWrite(LED_PIN, ledState ? HIGH : LOW);
+    }
     delay(20);
     return;
   }
